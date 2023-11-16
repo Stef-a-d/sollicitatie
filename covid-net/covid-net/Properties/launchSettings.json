@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "covid-net": {
+      "commandName": "Project",
+      "commandLineArgs": "--before 2020-12-31\r\n--after 2020-03-01\r\n--region Flanders"
+    }
+  }
+}
