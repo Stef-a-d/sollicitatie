@@ -2,8 +2,6 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 
 import java.time.LocalDate;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class CovidRecord {
     public LocalDate getDate() {

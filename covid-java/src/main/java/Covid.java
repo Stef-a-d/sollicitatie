@@ -5,12 +5,12 @@ import org.apache.commons.cli.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class Covid {
@@ -24,28 +24,28 @@ public class Covid {
 
         CovidRecordFilter filter = new CovidRecordFilter(cmd);
 
-        Aggregate aggregate = Aggregate.ALL;
-        if (cmd.hasOption("aggregate")) {
-            String agg = cmd.getOptionValue("aggregate");
-            aggregate = Aggregate.valueOf(agg.toUpperCase(Locale.ROOT));
-        }
-
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://epistat.sciensano.be/Data/COVID19BE_CASES_AGESEX.csv"))
                 .build();
 
         HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-        CsvToBean<CovidRecord> reader = new CsvToBeanBuilder<CovidRecord>(new InputStreamReader(response.body()))
+        Reader input = new InputStreamReader(response.body());
+
+        Map<String, Integer> records = parseCsv(filter, input);
+        records.forEach((k,v) -> System.out.printf("%s: %s, Cases: %s%n", filter.getAggregate(), k, v));
+    }
+
+    public static Map<String, Integer> parseCsv(CovidRecordFilter filter, Reader input) {
+        CsvToBean<CovidRecord> reader = new CsvToBeanBuilder<CovidRecord>(input)
                 .withType(CovidRecord.class)
                 .build();
         Map<String, Integer> records = new HashMap<>();
-        Aggregate finalAggregate = aggregate;
-        reader.stream().filter(filter::filter).forEach(record -> records.merge(record.getAggregateValue(finalAggregate), record.getCases(), Integer::sum));
-        records.forEach((k,v) -> System.out.printf("%s: %s, Cases: %s%n", finalAggregate, k, v));
+        reader.stream().filter(filter::filter).forEach(record -> records.merge(record.getAggregateValue(filter.getAggregate()), record.getCases(), Integer::sum));
+        return records;
     }
 
-    private static Options getOptions() {
+    public static Options getOptions() {
         Options options = new Options();
         options.addOption(Option.builder().longOpt("before").hasArg().build());
         options.addOption(Option.builder().longOpt("after").hasArg().build());

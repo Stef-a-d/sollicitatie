@@ -1,13 +1,14 @@
 import org.apache.commons.cli.CommandLine;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 public class CovidRecordFilter {
 
     private Predicate<CovidRecord> filter;
+    private Aggregate aggregate;
+
     public CovidRecordFilter(CommandLine cmd){
         filter = (record -> true);
 
@@ -17,7 +18,7 @@ public class CovidRecordFilter {
         }
         if (cmd.hasOption("after")) {
             LocalDate after = LocalDate.parse(cmd.getOptionValue("after"));
-            filter = filter.and(record -> record.getDate().isBefore(after));
+            filter = filter.and(record -> record.getDate().isAfter(after));
         }
         if (cmd.hasOption("province")) {
             String province = cmd.getOptionValue("province");
@@ -35,9 +36,19 @@ public class CovidRecordFilter {
             String sex = cmd.getOptionValue("sex");
             filter = filter.and(record -> record.getSex().contains(sex));
         }
+        aggregate = Aggregate.ALL;
+        if (cmd.hasOption("aggregate")) {
+            String agg = cmd.getOptionValue("aggregate");
+            aggregate = Aggregate.valueOf(agg.toUpperCase(Locale.ROOT));
+        }
     }
 
     public boolean filter(CovidRecord record){
         return filter.test(record);
+    }
+
+
+    public Aggregate getAggregate() {
+        return aggregate;
     }
 }
