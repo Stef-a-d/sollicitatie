@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace covid_net
 {
-    internal class CovidRecord(DateOnly date, string province, string region, string ageGroup, string sex, int cases)
+    public class CovidRecord(DateOnly date, string province, string region, string ageGroup, string sex, int cases)
     {
         public DateOnly Date { get; } = date;
         public string Province { get; } = province;

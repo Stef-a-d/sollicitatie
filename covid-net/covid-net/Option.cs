@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace covid_net
 {
-    internal class Option
+    public class Option
     {
         [Option("before")]
         public DateOnly? Before { get; set; }
@@ -28,7 +28,7 @@ namespace covid_net
 
     }
 
-    enum AggregationType
+    public enum AggregationType
     {
         Province,
         Region,

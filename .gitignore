@@ -1,0 +1,8 @@
+/covid-java/build/
+/covid-java/.gradle/
+/covid-java/.idea/
+/covid-net/.vs/
+/covid-net/covid-net/
+/covid-net/TestProject1/bin/Debug/net8.0
+/covid-net/TestProject1/obj/Debug/net8.0
+/covid-net/TestProject1/obj
