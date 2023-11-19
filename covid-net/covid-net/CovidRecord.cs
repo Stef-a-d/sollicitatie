@@ -34,11 +34,11 @@ namespace covid_net
 
         public bool Matches(Option o)
         {
-            if (o.Before != null && Date > o.Before)
+            if (o.Before != null && Date >= o.Before)
             {
                 return false;
             }
-            if (o.After != null && Date < o.After)
+            if (o.After != null && Date <= o.After)
             {
                 return false;
             }
@@ -51,6 +51,10 @@ namespace covid_net
                 return false;
             }
             if (o.Sex != null && !Sex.Contains(o.Sex))
+            {
+                return false;
+            }
+            if(o.Age != null && !AgeGroup.Contains(o.Age))
             {
                 return false;
             }
